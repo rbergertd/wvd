@@ -5,27 +5,34 @@ Import-Module -Name Microsoft.RDInfra.RDPowerShell
 Add-RdsAccount -DeploymentUrl "https://rdbroker.wvd.microsoft.com"
 
 #Make a new RemoteApp group - "Autocad" in this case
-New-RdsAppGroup williamtest wvd-pool Autocad -ResourceType "RemoteApp"
+New-RdsAppGroup Tdsolutionfactory td-demo-pool BasicApps -ResourceType "RemoteApp"
 
 #Verify your new RemoteApp group was created
-Get-RdsAppGroup williamtest wvd-pool
+Get-RdsAppGroup Tdsolutionfactory td-demo-pool
 
 #Pull start menu app list - to use AppAlias for easier application publishing
-Get-RdsStartMenuApp Williamtest wvd-pool Autocad
+Get-RdsStartMenuApp Tdsolutionfactory td-demo-pool BasicApps
 
 #Publish Apps using AppAlias (autofills in paths, etc)
 #ie: New-RdsRemoteApp <TenantName> <PoolName> RemoteAppGrpName -Name "Application Display Name" -AppAlias AppAliasFromAboveCommand
 
-New-RdsRemoteApp Williamtest wvd-pool Autocad -Name "Inventor 2019" -AppAlias autodeskinventor2019english
-New-RdsRemoteApp Williamtest wvd-pool Autocad -Name "Autocad Mechanical 2019" -AppAlias autocad2019englishautocadmechanical
-New-RdsRemoteApp Williamtest wvd-pool Autocad -Name "Revit 2019" -AppAlias revit2019
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Inventor 2020" -AppAlias autodeskinventor2020english
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Autocad Mechanical 2020" -AppAlias autocadmechanical2020english
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Word" -AppAlias word
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Published" -AppAlias publisher
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Excel" -AppAlias excel
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "PowerPoint" -AppAlias powerpoint
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Notepad" -AppAlias notepad
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Google Chrome" -AppAlias googlechrome
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Adobe Reader" -AppAlias acrobatreaderdc
+
 
 #Verify the applications are published
-Get-RdsRemoteApp Williamtest wvd-pool Autocad
+Get-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps
 
 #Remove user from desktop group, assign to RemoteApp group - user CANNOT be in both groups at once. You can either see the desktop, or the RemoteApps.
-Add-RdsAppGroupUser Williamtest wvd-pool "Desktop Application Group" -UserPrincipalName ryan.berger@thelendingside.com
-Add-RdsAppGroupUser Williamtest wvd-pool Autocad -UserPrincipalName ryan.berger@thelendingside.com
+Remove-RdsAppGroupUser Tdsolutionfactory td-demo-pool "Desktop Application Group" -UserPrincipalName demouser@tdsolutionfactory.onmicrosoft.com
+Add-RdsAppGroupUser Tdsolutionfactory td-demo-pool BasicApps -UserPrincipalName demouser@tdsolutionfactory.onmicrosoft.com
 
 
 
