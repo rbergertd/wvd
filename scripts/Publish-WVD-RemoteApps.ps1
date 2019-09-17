@@ -25,6 +25,10 @@ New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "PowerPoint" -Ap
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Notepad" -AppAlias notepad
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Google Chrome" -AppAlias googlechrome
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Adobe Reader" -AppAlias acrobatreaderdc
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Access" -AppAlias access
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Outlook" -AppAlias outlook
+
+
 
 
 #Verify the applications are published
