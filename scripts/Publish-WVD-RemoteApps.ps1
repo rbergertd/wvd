@@ -19,7 +19,7 @@ Get-RdsStartMenuApp Tdsolutionfactory td-demo-pool BasicApps
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Inventor 2020" -AppAlias autodeskinventor2020english
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Autocad Mechanical 2020" -AppAlias autocadmechanical2020english
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Word" -AppAlias word
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Published" -AppAlias publisher
+New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Publisher" -AppAlias publisher
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Excel" -AppAlias excel
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "PowerPoint" -AppAlias powerpoint
 New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Notepad" -AppAlias notepad
