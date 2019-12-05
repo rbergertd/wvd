@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiVersion": {
+            "value": "2017-06-01"
+        },
+        "domainConfigurationType": {
+            "value": "FullySynced"
+        },
+        "domainName": {
+            "value": "aadds.tdsolutionfactory.onmicrosoft.com"
+        },
+        "filteredSync": {
+            "value": "Disabled"
+        },
+        "location": {
+            "value": "eastus2"
+        },
+        "notificationSettings": {
+            "value": {
+                "notifyGlobalAdmins": "Enabled",
+                "notifyDcAdmins": "Enabled",
+                "additionalRecipients": []
+            }
+        },
+        "subnetName": {
+            "value": "DomainServices"
+        },
+        "vnetName": {
+            "value": "AutoDesk-VNet"
+        },
+        "vnetResourceGroup": {
+            "value": "AutoDeskOnWVD3"
+        }
+    }
+}
