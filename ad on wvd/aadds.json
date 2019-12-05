@@ -3,35 +3,31 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "apiVersion": {
-            "value": "2017-06-01"
+            "type": "string"
         },
         "domainConfigurationType": {
-            "value": "FullySynced"
+            "type": "string"
         },
         "domainName": {
-            "value": "aadds.tdsolutionfactory.onmicrosoft.com"
+            "type": "string"
         },
         "filteredSync": {
-            "value": "Disabled"
+            "type": "string"
         },
         "location": {
-            "value": "eastus2"
+            "type": "string"
         },
         "notificationSettings": {
-            "value": {
-                "notifyGlobalAdmins": "Enabled",
-                "notifyDcAdmins": "Enabled",
-                "additionalRecipients": []
-            }
+            "type": "object"
         },
         "subnetName": {
-            "value": "DomainServices"
+            "type": "string"
         },
         "vnetName": {
-            "value": "AutoDesk-VNet"
+            "type": "string"
         },
         "vnetResourceGroup": {
-            "value": "AutoDeskOnWVD3"
+            "type": "string"
         }
     },
     "resources": [
