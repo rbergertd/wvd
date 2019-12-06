@@ -44,7 +44,42 @@
                 "domainConfigurationType": "[parameters('domainConfigurationType')]",
                 "notificationSettings": "[parameters('notificationSettings')]"
             }
+        },
+        {
+        "type": "Microsoft.Resources/deployments",
+        "name": "UpdateVNetDNS",
+        "apiVersion": "2016-02-01",
+        "dependsOn": [
+            "[concat('Microsoft.AAD/domainServices/', parameters('domainName'))]"
+        ],
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "https://raw.githubusercontent.com/rbergertd/wvd/master/ad%20on%20wvd/vnet-with-dns-server.json",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "virtualNetworkName": {
+                    "value": "[parameters('vnetName')]"
+                },
+                "virtualNetworkAddressRange": {
+                    "value": "10.0.0.0/16"
+                },
+                "subnetName": {
+                    "value": "[parameters('subnetName')]"
+                },
+                "subnetRange": {
+                    "value": "10.0.0.0/24"
+                },
+                "DNSServerAddress": {
+                    "value": [
+                        "10.0.0.4",
+                        "10.0.0.5"
+                    ]
+                }
+            }
         }
+    }
     ],
     "outputs": {}
 }
