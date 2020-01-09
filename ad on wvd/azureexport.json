@@ -31,8 +31,8 @@
         "workloadsSubnetName": "Workloads",
         "vnetName": "AutoDesk-VNet",
         "vnetAddressRange": [
-                "10.0.0.0/24"
-            ],
+            "10.0.0.0/24"
+        ],
         "subnet1AddressRange": "10.0.0.0/24",
         "subnet2AddressRange": "10.0.1.0/24"
 
@@ -117,8 +117,14 @@
                 "addressSpace": {
                     "addressPrefixes": "[variables('vnetAddressRange')]"
                 },
-                "subnets": [
+                "resources": [
                     {
+                        "apiVersion": "2018-04-01",
+                        "type": "subnets",
+                        "location": "[parameters('location')]",
+                        "dependsOn": [
+                            "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+                        ],
                         "name": "[variables('subnetName')]",
                         "properties": {
                             "addressPrefix": "[variables('subnet1AddressRange')]",
@@ -128,11 +134,18 @@
                         }
                     },
                     {
+                        "apiVersion": "2018-04-01",
+                        "type": "subnets",
+                        "location": "[parameters('location')]",
+                        "dependsOn": [
+                            "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+                        ],
                         "name": "[variables('workloadsSubnetName')]",
                         "properties": {
                             "addressPrefix": "[variables('subnet2AddressRange')]"
                         }
                     }
+
                 ]
             }
         },
@@ -172,5 +185,6 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+    }
 }
