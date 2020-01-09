@@ -29,7 +29,15 @@
         "nsgName": "AADDS-NSG",
         "subnetName": "DomainServices",
         "workloadsSubnetName": "Workloads",
-        "vnetName": "AutoDesk-VNet"
+        "vnetName": "AutoDesk-VNet",
+        "vnetAddressRange": [
+                "10.0.0.0/24"
+            ],
+        "subnet1AddressRange": "10.0.0.0/24",
+        "subnet2AddressRange": "10.0.1.0/24"
+
+
+
     },
     "resources": [
         {
@@ -107,13 +115,13 @@
             ],
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "10.0.0.0/16"
+                    "addressPrefixes": "[variables('vnetAddressRange')]"
                 },
                 "subnets": [
                     {
                         "name": "[variables('subnetName')]",
                         "properties": {
-                            "addressPrefix": "10.0.0.0/24",
+                            "addressPrefix": "[variables('subnet1AddressRange')]",
                             "networkSecurityGroup": {
                                 "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/NetworkSecurityGroups/', variables('nsgName'))]"
                             }
@@ -122,12 +130,47 @@
                     {
                         "name": "[variables('workloadsSubnetName')]",
                         "properties": {
-                            "addressPrefix": "10.0.1.0/24"
+                            "addressPrefix": "[variables('subnet2AddressRange')]"
                         }
                     }
                 ]
             }
         },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "UpdateVNetDNS",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "[concat('Microsoft.AAD/domainServices/', parameters('domainName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/rbergertd/wvd/master/ad%20on%20wvd/vnet-with-dns-server.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "virtualNetworkAddressRange": {
+                        "value": "10.0.0.0/16"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnetName')]"
+                    },
+                    "subnetRange": {
+                        "value": "10.0.0.0/24"
+                    },
+                    "DNSServerAddress": {
+                        "value": [
+                            "10.0.0.4",
+                            "10.0.0.5"
+                        ]
+                    }
+                }
+            }
+        }
     ],
     "outputs": {}
 }
