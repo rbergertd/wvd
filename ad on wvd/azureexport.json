@@ -30,9 +30,7 @@
         "subnetName": "DomainServices",
         "workloadsSubnetName": "Workloads",
         "vnetName": "AutoDesk-VNet",
-        "vnetAddressRange": [
-            "10.0.0.0/24"
-        ],
+        "vnetAddressRange": "10.0.0.0/16",
         "subnet1AddressRange": "10.0.0.0/24",
         "subnet2AddressRange": "10.0.1.0/24"
 
@@ -115,7 +113,9 @@
             ],
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[variables('vnetAddressRange')]"
+                    "addressPrefixes": [
+                        "[variables('vnetAddressRange')]"
+                    ]
                 }
             },
             "resources": [
@@ -130,7 +130,7 @@
                         "properties": {
                             "addressPrefix": "[variables('subnet1AddressRange')]",
                             "networkSecurityGroup": {
-                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/NetworkSecurityGroups/', variables('nsgName'))]"
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vnetResourceGroup'), '/providers/Microsoft.Network/NetworkSecurityGroups/', variables('nsgName'))]"
                             }
                         }
                     },
