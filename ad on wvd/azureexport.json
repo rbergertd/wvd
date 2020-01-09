@@ -116,8 +116,9 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": "[variables('vnetAddressRange')]"
-                },
-                "resources": [
+                }
+            },
+            "resources": [
                     {
                         "apiVersion": "2018-04-01",
                         "type": "subnets",
@@ -147,7 +148,6 @@
                     }
 
                 ]
-            }
         },
         {
             "type": "Microsoft.Resources/deployments",
