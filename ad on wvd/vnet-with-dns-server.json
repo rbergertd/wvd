@@ -6,7 +6,17 @@
       "type": "string",
       "metadata": {
         "description": "The name of the Virtual Network to Create"
-      }
+      },
+      "defaultValue": "AutoDesk-VNet"
+
+    },
+    "vnetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource group name of the VNet."
+      },
+      "defaultValue": "AutoDeskOnWVD6"
+
     },
     "virtualNetworkAddressRange": {
       "type": "string",
@@ -19,7 +29,17 @@
       "type": "string",
       "metadata": {
         "description": "The name of the subnet created in the new VNET"
-      }
+      },
+      "defaultValue": "DomainServices"
+
+    },
+    "workloadsSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the workloads subnet created in the new VNET"
+      },
+      "defaultValue": "Workloads"
+
     },
     "subnetRange": {
       "type": "string",
@@ -28,11 +48,30 @@
       },
       "defaultValue": "10.0.0.0/24"
     },
+    "workloadsSubnetRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the subnet created in the new VNET"
+      },
+      "defaultValue": "10.0.1.0/24"
+    },
     "DNSServerAddress": {
       "type": "array",
       "metadata": {
         "description": "The DNS address(es) of the DNS Server(s) used by the VNET"
-      }
+      },
+      "defaultValue": [
+        "10.0.0.4",
+        "10.0.0.5"
+      ]
+
+    },
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the NSG to apply to Domain Services subnet"
+      },
+      "defaultValue": "AADDS-NSG"
     },
     "location": {
       "type": "string",
@@ -46,8 +85,10 @@
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('virtualNetworkName')]",
-      "apiVersion": "2016-03-30",
       "location": "[parameters('location')]",
+      "apiVersion": "2018-04-01",
+      "dependsOn": [
+      ],
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -56,16 +97,38 @@
         },
         "dhcpOptions": {
           "dnsServers": "[parameters('DNSServerAddress')]"
-        },
-        "subnets": [
-          {
-            "name": "[parameters('subnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnetRange')]"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2018-04-01",
+          "type": "subnets",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
+          ],
+          "name": "[parameters('subnetName')]",
+          "properties": {
+            "addressPrefix": "[parameters('subnetRange')]",
+            "networkSecurityGroup": {
+              "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vnetResourceGroup'), '/providers/Microsoft.Network/NetworkSecurityGroups/', parameters('nsgName'))]"
             }
           }
-        ]
-      }
+        },
+        {
+          "apiVersion": "2018-04-01",
+          "type": "subnets",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
+          ],
+          "name": "[parameters('workloadsSubnetName')]",
+          "properties": {
+            "addressPrefix": "[parameters('workloadsSubnetRange')]"
+          }
+        }
+
+      ]
     }
   ]
 }
