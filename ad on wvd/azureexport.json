@@ -1,0 +1,168 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiVersion": {
+            "type": "string"
+        },
+        "domainConfigurationType": {
+            "type": "string"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "filteredSync": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "notificationSettings": {
+            "type": "object"
+        },
+        "vnetResourceGroup": {
+            "type": "string"
+        }
+
+    },
+    "variables": {
+        "nsgName": "AADDS-NSG",
+        "subnetName": "DomainServices",
+        "workloadsSubnetName": "Workloads",
+        "vnetName": "AutoDesk-VNet"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.AAD/DomainServices",
+            "name": "[parameters('domainName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+            ],
+            "properties": {
+                "domainName": "[parameters('domainName')]",
+                "subnetId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vnetResourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', variables('vnetName'), '/subnets/', variables('subnetName'))]",
+                "filteredSync": "[parameters('filteredSync')]",
+                "domainConfigurationType": "[parameters('domainConfigurationType')]",
+                "notificationSettings": "[parameters('notificationSettings')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/NetworkSecurityGroups",
+            "name": "[variables('nsgName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowSyncWithAzureAD",
+                        "properties": {
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound",
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "AzureActiveDirectoryDomainServices",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "443"
+                        }
+                    },
+                    {
+                        "name": "AllowPSRemoting",
+                        "properties": {
+                            "access": "Allow",
+                            "priority": 301,
+                            "direction": "Inbound",
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "AzureActiveDirectoryDomainServices",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "5986"
+                        }
+                    },
+                    {
+                        "name": "AllowRD",
+                        "properties": {
+                            "access": "Allow",
+                            "priority": 201,
+                            "direction": "Inbound",
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "CorpNetSaw",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "3389"
+                        }
+                    }
+                ]
+            },
+            "apiVersion": "2018-04-01"
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetName')]",
+            "location": "[parameters('location')]",
+            "apiVersion": "2018-04-01",
+            "dependsOn": [
+                "[concat('Microsoft.Network/NetworkSecurityGroups/', variables('nsgName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "10.0.0.0/16"
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/NetworkSecurityGroups/', variables('nsgName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('workloadsSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "10.0.1.0/24"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "UpdateVNetDNS",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "[concat('Microsoft.AAD/domainServices/', parameters('domainName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/rbergertd/wvd/master/ad%20on%20wvd/vnet-with-dns-server.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "virtualNetworkAddressRange": {
+                        "value": "10.0.0.0/16"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnetName')]"
+                    },
+                    "subnetRange": {
+                        "value": "10.0.0.0/24"
+                    },
+                    "DNSServerAddress": {
+                        "value": [
+                            "10.0.0.4",
+                            "10.0.0.5"
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
