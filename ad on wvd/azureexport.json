@@ -44,7 +44,8 @@
             "name": "[parameters('domainName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'), '/subnets/', variables ('subnetName'))]"
             ],
             "properties": {
                 "domainName": "[parameters('domainName')]",
@@ -166,14 +167,26 @@
                     "virtualNetworkName": {
                         "value": "[variables('vnetName')]"
                     },
+                    "vnetResourceGroup": {
+                        "value": "[parameters('vnetResourceGroup')]"
+                    },
                     "virtualNetworkAddressRange": {
-                        "value": "10.0.0.0/16"
+                        "value": "[variables('vnetAddressRange')]"
                     },
                     "subnetName": {
                         "value": "[variables('subnetName')]"
                     },
+                    "workloadsSubnetName": {
+                        "value": "[variables('workloadsSubnetName')]"
+                    },
                     "subnetRange": {
-                        "value": "10.0.0.0/24"
+                        "value": "[variables('subnet1AddressRange')]"
+                    },
+                    "workloadsSubnetRange": {
+                        "value": "[variables('subnet2AddressRange')]"
+                    },
+                    "nsgName": {
+                        "value": "[variables('nsgName')]"
                     },
                     "DNSServerAddress": {
                         "value": [
