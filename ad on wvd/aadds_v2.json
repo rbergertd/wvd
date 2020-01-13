@@ -160,7 +160,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/rbergertd/wvd/master/ad%20on%20wvd/vnet-with-dns-server.json",
+                    "uri": "https://raw.githubusercontent.com/rbergertd/wvd/master/ad%20on%20wvd/aadds-update-vnet-dns_v2.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
