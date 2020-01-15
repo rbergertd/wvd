@@ -67,13 +67,6 @@
                 "description": "The password that corresponds to the existing domain username."
             }
         },
-        "ouPath": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "(Optional) Specifiy an organizational unit (OU) to place the new virtual machines when joining the domain. If you do not have a specific OU to place the virtual machines, leave it blank. Example OU: 'OU=testOU;DC=domain;DC=Domain;DC=com'"
-            }
-        },
         "existingVnetName": {
             "type": "string",
             "metadata": {
@@ -197,6 +190,7 @@
         "hostPoolFriendlyName": "[variables('hostPoolName')]",
         "hostPoolDescription": "Created through ARM template",
         "registrationExpirationHours": "48",
+        "ouPath": "",
         "vmTemplateName": "[concat( if(variables('rdshManagedDisks'), 'managedDisks', 'unmanagedDisks'), '-', toLower(replace(variables('rdshImageSource'),' ', '')), 'vm')]",
         "vmTemplateUri": "[uri(variables('_artifactsLocation'), concat('nestedtemplates/', variables('vmTemplateName'), '.json', variables('_artifactsLocationSasToken')))]",
         "rdshVmNamesOutput": {
@@ -312,7 +306,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "name": "[parameters('domainToJoin')]",
-                    "ouPath": "[parameters('ouPath')]",
+                    "ouPath": "[variables('ouPath')]",
                     "user": "[parameters('existingDomainUPN')]",
                     "restart": "true",
                     "options": "3"
