@@ -32,7 +32,7 @@
         "nsgName": "AADDS-NSG",
         "subnetName": "DomainServices",
         "workloadsSubnetName": "Workloads",
-        "vnetName": "AutoDesk-VNet",
+        "vnetName": "AADDS-VNet",
         "bastionSubnetName": "AzureBastionSubnet",
         "vnetAddressRange": "10.0.0.0/16",
         "subnet1AddressRange": "10.0.0.0/24",

@@ -29,7 +29,7 @@
         "nsgName": "AADDS-NSG",
         "subnetName": "DomainServices",
         "workloadsSubnetName": "Workloads",
-        "vnetName": "AutoDesk-VNet",
+        "vnetName": "AADDS-VNet",
         "vnetAddressRange": "10.0.0.0/16",
         "subnet1AddressRange": "10.0.0.0/24",
         "subnet2AddressRange": "10.0.1.0/24"
