@@ -440,15 +440,15 @@
         },
 
         {
+            "condition": "[greater(parameters('rdshNumberOfInstances'),1)]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('rdshPrefix'), copyindex(1),'/installcustomscript')]",
             "apiVersion": "2018-06-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-
-               "additional-rdsh-nvidia-grid-loop"
+                "additional-rdsh-dsc-loop"
             ],
-             "copy": {
+            "copy": {
                 "name": "fslogix-profiles-loop",
                 "count": "[if(greater(parameters('rdshNumberOfInstances'),1),sub(parameters('rdshNumberOfInstances'),1),1)]"
             },
