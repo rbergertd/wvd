@@ -170,7 +170,7 @@
         }
     },
     "variables": {
-        "_artifactsLocation": "https://raw.githubusercontent.com/Azure/RDS-Templates/master/wvd-templates/Create%20and%20provision%20WVD%20host%20pool/",
+        "_artifactsLocation": "https://raw.githubusercontent.com/Azure/RDS-Templates/master/wvd-templates/",
         "_artifactsLocationSasToken": "",
         "rdshImageSource": "Gallery",
         "vmImageVhdUri": "",
