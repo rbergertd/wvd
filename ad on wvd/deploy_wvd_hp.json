@@ -438,6 +438,29 @@
                 }
             }
         },
+                {
+            "name": "[concat(variables('rdshPrefix'), '0/', 'installcustomscript')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('rdshPrefix'),'0/extensions/dscextension')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/acapodilupo/WVD_Solution/master/DSC/script.ps1"
+                    ]
+                },
+                "protectedSettings": {
+                    "commandToExecute": "[variables('commandToExecute')]"
+                }
+            }
+        },
 
         {
             "condition": "[greater(parameters('rdshNumberOfInstances'),1)]",
