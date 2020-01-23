@@ -2,9 +2,6 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "apiVersion": {
-            "type": "string"
-        },
         "domainConfigurationType": {
             "type": "string"
         },
@@ -130,7 +127,8 @@
                         "type": "subnets",
                         "location": "[parameters('location')]",
                         "dependsOn": [
-                            "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+                            "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+                            "[concat('Microsoft.Network/NetworkSecurityGroups/', variables('nsgName'))]"
                         ],
                         "name": "[variables('subnetName')]",
                         "properties": {

@@ -5,7 +5,7 @@ Import-Module -Name Microsoft.RDInfra.RDPowerShell
 Add-RdsAccount -DeploymentUrl "https://rdbroker.wvd.microsoft.com"
 
 #Make a new RemoteApp group - "Autocad" in this case
-New-RdsAppGroup Tdsolutionfactory td-demo-pool BasicApps -ResourceType "RemoteApp"
+New-RdsAppGroup $TenantName $HostPoolName BasicApps -ResourceType "RemoteApp"
 
 #Verify your new RemoteApp group was created
 Get-RdsAppGroup Tdsolutionfactory td-demo-pool
@@ -16,17 +16,17 @@ Get-RdsStartMenuApp Tdsolutionfactory td-demo-pool BasicApps
 #Publish Apps using AppAlias (autofills in paths, etc)
 #ie: New-RdsRemoteApp <TenantName> <PoolName> RemoteAppGrpName -Name "Application Display Name" -AppAlias AppAliasFromAboveCommand
 
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Inventor 2020" -AppAlias autodeskinventor2020english
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Autocad Mechanical 2020" -AppAlias autocadmechanical2020english
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Word" -AppAlias word
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Publisher" -AppAlias publisher
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Excel" -AppAlias excel
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "PowerPoint" -AppAlias powerpoint
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Notepad" -AppAlias notepad
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Google Chrome" -AppAlias googlechrome
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Adobe Reader" -AppAlias acrobatreaderdc
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Access" -AppAlias access
-New-RdsRemoteApp Tdsolutionfactory td-demo-pool BasicApps -Name "Outlook" -AppAlias outlook
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Inventor 2020" -AppAlias autodeskinventor2020english
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Autocad Mechanical 2020" -AppAlias autocadmechanical2020english
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Word" -AppAlias word
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Publisher" -AppAlias publisher
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Excel" -AppAlias excel
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "PowerPoint" -AppAlias powerpoint
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Notepad" -AppAlias notepad
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Google Chrome" -AppAlias googlechrome
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Adobe Reader" -AppAlias acrobatreaderdc
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Access" -AppAlias access
+New-RdsRemoteApp $TenantName $HostPoolName BasicApps -Name "Outlook" -AppAlias outlook
 
 
 
