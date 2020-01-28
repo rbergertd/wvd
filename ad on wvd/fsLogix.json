@@ -22,7 +22,7 @@
         },
         "adminUsername": {
             "type": "string",
-            "defaultValue": "fslogixadmin",
+            "defaultValue": "",
             "metadata": {
                 "description": "Local administrative username for the Virtual Machine."
             }
