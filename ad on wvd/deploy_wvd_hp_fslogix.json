@@ -162,14 +162,14 @@
                 "description": "(Required when isServicePrincipal = True) This value identifies the Azure AD tenant of the service principal."
             }
         },
-        "adminUsername": {
+        "fsLogixAdminUsername": {
             "type": "string",
-            "defaultValue": "fslogixadmin",
+            "defaultValue": "fslogix",
             "metadata": {
                 "description": "Local administrative username for the FsLogix Virtual Machine."
             }
         },
-        "adminPassword": {
+        "fsLogixAdminPassword": {
             "type": "securestring",
             "metadata": {
                 "description": "Password for the FsLogix Virtual Machine's local administrative username."
@@ -257,11 +257,11 @@
                     "domainToJoin": {
                         "value": "[parameters('domainToJoin')]"
                     },
-                    "adminUsername": {
-                        "value": "[parameters('adminUserName')]"
+                    "fsLogixAdminUsername": {
+                        "value": "[parameters('fsLogixAdminUserName')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "fsLogixAdminPassword": {
+                        "value": "[parameters('fsLogixAdminPassword')]"
                     },
                     "userProfileDiskSize": {
                         "value": "[parameters('userProfileDiskSize')]"

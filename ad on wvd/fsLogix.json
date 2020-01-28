@@ -20,14 +20,14 @@
                 "description": "Name of the AADDS domain you want to join the FsLogix server onto."
             }
         },
-        "adminUsername": {
+        "fsLogixAdminUsername": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Local administrative username for the Virtual Machine."
             }
         },
-        "adminPassword": {
+        "fsLogixAdminPassword": {
             "type": "securestring",
             "metadata": {
                 "description": "Password for the Virtual Machine's local administrative username."
@@ -116,8 +116,8 @@
                 },
                 "osProfile": {
                     "computerName": "[variables('virtualMachineName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminUsername": "[parameters('fsLogixAdminUsername')]",
+                    "adminPassword": "[parameters('fsLogixAdminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
