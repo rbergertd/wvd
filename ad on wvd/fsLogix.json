@@ -2,17 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "domainUsername": {
+        "existingDomainUPN": {
             "type": "string",
-            "defaultValue": "admin@domainname.onmicrosoft.com",
             "metadata": {
-                "description": "Admin Username for the Azure AD DS instance."
+                "description": "A username in the domain that has privileges to join the session hosts to the domain. For example, 'user1@contoso.com'."
             }
         },
-        "domainPassword": {
+        "existingDomainPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "Admin password for the Azure AD DS instance."
+                "description": "The password that corresponds to the existing domain username."
             }
         },
         "domainToJoin":{
@@ -177,12 +176,12 @@
                             "autoUpgradeMinorVersion": true,
                             "settings": {
                                 "Name": "[parameters('domainToJoin')]",
-                                "User": "[concat(parameters('domainToJoin'), '\\', parameters('domainUsername'))]",
+                                "User": "[concat(parameters('domainToJoin'), '\\', parameters('existingDomainUPN'))]",
                                 "Restart": "true",
                                 "Options": 3
                             },
                             "protectedSettings": {
-                                "Password": "[parameters('domainPassword')]"
+                                "Password": "[parameters('existingDomainPassword')]"
                             }
                         }
                     }
