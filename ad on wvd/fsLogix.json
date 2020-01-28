@@ -1,0 +1,219 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "domainUsername": {
+            "type": "string",
+            "defaultValue": "admin@domainname.onmicrosoft.com",
+            "metadata": {
+                "description": "Admin Username for the Azure AD DS instance."
+            }
+        },
+        "domainPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password for the Azure AD DS instance."
+            }
+        },
+        "domainToJoin":{
+            "type": "string",
+            "metadata": {
+                "description": "Name of the AADDS domain you want to join the FsLogix server onto."
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "fslogixadmin",
+            "metadata": {
+                "description": "Local administrative username for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine's local administrative username."
+            }
+        },
+        "userProfileDiskSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of User Profile Disk data drive. This is where the user's profiles will be stored."
+            },
+            "allowedValues": [
+                "128",
+                "256",
+                "512",
+                "1024",
+                "2048",
+                "4096"
+            ]
+        }
+    },
+    "variables": {
+        "virtualMachineName": "FS1",
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sawinvm')]",
+        "dnsLabelPrefix": "FS1",
+        "nicName": "fslogixNIC",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetName": "Workloads",
+        "subnetPrefix": "10.0.1.0/24",
+        "publicIPAddressName": "fslogixPiP",
+        "virtualNetworkName": "AADDS-VNet",
+        "subnetRef": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
+        "location": "[resourceGroup().location]",
+        "vmExtensionName": "dscExtension",
+        "modulesURL": "https://raw.githubusercontent.com/acapodilupo/WVD_Solution/master/DSC",
+        "configurationFunction": "DSC.ps1\\DSC"
+            },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('nicName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-03-01",
+            "name": "[variables('virtualMachineName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ],
+            "tags": {
+                "displayName": "Virtual Machine"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2s_v3"
+                },
+                "osProfile": {
+                    "computerName": "[variables('virtualMachineName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+
+                        }
+                    },
+                    "dataDisks": [
+                        {
+                            "name": "UserProfileDisks",
+                            "diskSizeGB": "[parameters('userProfileDiskSize')]",
+                            "lun": 0,
+                            "managedDisk": {
+                                "storageAccountType": "Premium_LRS"
+                            },
+                            "createOption": "Empty",
+                            "caching": "ReadOnly"
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
+                    }
+                }
+            },
+               "resources":[
+                    {
+                        "apiVersion": "2015-06-15",
+                        "type": "Microsoft.Compute/virtualMachines/extensions",
+                        "name": "[concat(variables('virtualMachineName'),'/joindomain')]",
+                        "location": "[variables('location')]",
+                        "dependsOn": [
+                            "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
+                        ],
+                        "properties": {
+                            "publisher": "Microsoft.Compute",
+                            "type": "JsonADDomainExtension",
+                            "typeHandlerVersion": "1.3",
+                            "autoUpgradeMinorVersion": true,
+                            "settings": {
+                                "Name": "[parameters('domainToJoin')]",
+                                "User": "[concat(parameters('domainToJoin'), '\\', parameters('domainUsername'))]",
+                                "Restart": "true",
+                                "Options": 3
+                            },
+                            "protectedSettings": {
+                                "Password": "[parameters('domainPassword')]"
+                            }
+                        }
+                    }
+                ]
+
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('virtualMachineName'),'/',variables('vmExtensionName'))]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]",
+                 "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'), '/extensions', '/joindomain')]"
+            ],
+            "tags": {
+                "displayName": "DSC Resource Extension"
+            },
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.19",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "ModulesUrl": "[concat(variables('modulesURL'), '/DSC.zip')]",
+                    "ConfigurationFunction": "[variables('configurationFunction')]",
+                    "Properties": {
+                    }
+                },
+                "protectedSettings": null
+            }
+        }
+    ]
+}
