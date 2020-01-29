@@ -198,7 +198,7 @@
         }
     },
     "variables": {
-        "_artifactsLocation": "https://raw.githubusercontent.com/Azure/RDS-Templates/master/wvd-templates/",
+        "_artifactsLocation": "https://raw.githubusercontent.com/Azure/RDS-Templates/d1f15934d476243bdddb6d57c4750d1403e90b43/wvd-templates/",
         "_artifactsLocationSasToken": "",
         "rdshImageSource": "Gallery",
         "vmImageVhdUri": "",
