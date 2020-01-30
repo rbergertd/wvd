@@ -22,7 +22,7 @@
         },
         "rdshNumberOfInstances": {
             "type": "int",
-            "defaultValue": 3,
+            "defaultValue": 2,
             "metadata": {
                 "description": "Number of session hosts that will be created and added to the hostpool."
             }
@@ -44,7 +44,7 @@
             },
             "defaultValue": "Standard_NV6",
             "allowedValues": [
-                "Standard_D2s_v3",
+                "Standard_NV6_Promo",
                 "Standard_NV6",
                 "Standard_NV12",
                 "Standard_NV24"
@@ -86,48 +86,17 @@
                 "description": "The resource group containing the existing virtual network."
             }
         },
-        "rdBrokerURL": {
-            "type": "string",
-            "metadata": {
-                "description": "The Broker URL of the Windows Virtual Desktop deployment the session hosts will be connected to."
-            },
-            "defaultValue": "https://rdbroker.wvd.microsoft.com"
-        },
-        "existingTenantGroupName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the tenant group in the Windows Virtual Desktop deployment"
-            },
-            "defaultValue": "Default Tenant Group"
-        },
         "existingTenantName": {
             "type": "string",
             "metadata": {
-                "description": "The name of the tenant in the Windows Virtual Desktop deployment."
+                "description": "The name of the tenant in the Windows Virtual Desktop deployment. This name must be globally unique."
             }
         },
         "hostPoolName": {
             "type": "string",
             "metadata": {
-                "description": "The name of the hostpool to be created in the RDS Tenant."
+                "description": "The name of the hostpool to be created in the RDS Tenant. This name must be unique within the tenant."
             }
-        },
-        "serviceMetadataLocation": {
-            "type": "string",
-            "metadata": {
-                "description": "Windows Virtual Desktop stores information that is global in nature. Select the location you would like the service metadata to be stored. See https://aka.ms/wvdgeo for more information."
-            },
-            "allowedValues": [
-                "United-States"
-            ],
-            "defaultValue": "United-States"
-        },
-        "enablePersistentDesktop": {
-            "type": "bool",
-            "metadata": {
-                "description": "Set this parameter to true if you would like to enable Persistent Desktop experience. Defaults to false."
-            },
-            "defaultValue": false
         },
         "defaultDesktopUsers": {
             "type": "string",
@@ -139,8 +108,9 @@
         "tenantAdminUpnOrApplicationId": {
             "type": "string",
             "metadata": {
-                "description": "The template will fail if you enter a user account that requires MFA or an application that is secured by a certificate. The UPN or ApplicationId must be an RDS Owner in the Windows Virtual Desktop Tenant to create the hostpool or an RDS Owner of the host pool to provision the host pool with additional VMs."
+                "description": "The username to create the Host Pool on the WVD Tenant. Must have TenantCreator Role on the WVD application."
             }
+
         },
         "tenantAdminPassword": {
             "type": "securestring",
@@ -148,25 +118,11 @@
                 "description": "The password that corresponds to the tenant admin UPN."
             }
         },
-        "isServicePrincipal": {
-            "type": "bool",
-            "defaultValue": false,
-            "metadata": {
-                "description": "The boolean value indicating if the credentials are for a service principal."
-            }
-        },
-        "aadTenantId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "(Required when isServicePrincipal = True) This value identifies the Azure AD tenant of the service principal."
-            }
-        },
         "fsLogixAdminUsername": {
             "type": "string",
             "defaultValue": "fslogix",
             "metadata": {
-                "description": "Local administrative username for the FsLogix Virtual Machine."
+                "description": "Local administrative username for the FsLogix Virtual Machine. This account can be used to access FS1 in the event your AADDS credentials are not properly woring or applying administrative privledges."
             }
         },
         "fsLogixAdminPassword": {
@@ -180,6 +136,7 @@
             "metadata": {
                 "description": "Size of User Profile Disk data drive. This is where the user's profiles will be stored."
             },
+            "defaultValue": "256",
             "allowedValues": [
                 "128",
                 "256",
@@ -234,7 +191,11 @@
             ]
         },
         "vmCreation-linkedTemplate_name": "[concat(variables('rdshPrefix'), 'vmCreation-linkedTemplate')]",
-        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File script.ps1"
+        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File script.ps1",
+        "rdBrokerUrl": "https://rdbroker.wvd.microsoft.com",
+        "enablePersistentDesktop": false,
+        "existingTenantGroupName": "Default Tenant Group",
+        "isServicePrincipal": false
     },
     "resources": [
         {
@@ -271,7 +232,6 @@
         },
         {
             "apiVersion": "2018-10-01",
-            "condition": "[equals(parameters('enablePersistentDesktop'),bool('False'))]",
             "type": "Microsoft.Compute/availabilitySets",
             "dependsOn": [
                 "Microsoft.Resources/deployments/fsLogixDeploy"
@@ -346,7 +306,7 @@
                         "value": "[parameters('location')]"
                     },
                     "enablePersistentDesktop": {
-                        "value": "[parameters('enablePersistentDesktop')]"
+                        "value": "[variables('enablePersistentDesktop')]"
                     }
                 }
             }
@@ -401,16 +361,16 @@
                             "userName": "[parameters('tenantAdminUpnOrApplicationId')]",
                             "password": "PrivateSettingsRef:tenantAdminPassword"
                         },
-                        "RDBrokerURL": "[parameters('rdBrokerURL')]",
+                        "RDBrokerURL": "[variables('rdBrokerURL')]",
                         "DefinedTenantGroupName": "[parameters('existingTenantGroupName')]",
                         "TenantName": "[variables('existingTenantName')]",
                         "HostPoolName": "[variables('hostPoolName')]",
                         "Description": "[variables('hostPoolDescription')]",
                         "FriendlyName": "[variables('hostPoolFriendlyName')]",
                         "Hours": "[variables('registrationExpirationHours')]",
-                        "isServicePrincipal": "[parameters('isServicePrincipal')]",
+                        "isServicePrincipal": "[variables('isServicePrincipal')]",
                         "AadTenantId": "[parameters('aadTenantId')]",
-                        "EnablePersistentDesktop": "[parameters('enablePersistentDesktop')]",
+                        "EnablePersistentDesktop": "[variables('enablePersistentDesktop')]",
                         "defaultDesktopUsers": "[concat('\"',parameters('defaultDesktopUsers'),'\"')]"
                     }
                 },
@@ -447,12 +407,12 @@
                             "userName": "[parameters('tenantAdminUpnOrApplicationId')]",
                             "password": "PrivateSettingsRef:tenantAdminPassword"
                         },
-                        "RDBrokerURL": "[parameters('rdBrokerURL')]",
+                        "RDBrokerURL": "[variables('rdBrokerURL')]",
                         "DefinedTenantGroupName": "[parameters('existingTenantGroupName')]",
                         "TenantName": "[variables('existingTenantName')]",
                         "HostPoolName": "[variables('hostPoolName')]",
                         "Hours": "[variables('registrationExpirationHours')]",
-                        "isServicePrincipal": "[parameters('isServicePrincipal')]",
+                        "isServicePrincipal": "[variables('isServicePrincipal')]",
                         "AadTenantId": "[parameters('aadTenantId')]"
                     }
                 },
