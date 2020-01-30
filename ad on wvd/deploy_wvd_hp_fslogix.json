@@ -110,7 +110,6 @@
             "metadata": {
                 "description": "The username to create the Host Pool on the WVD Tenant. Must have TenantCreator Role on the WVD application."
             }
-
         },
         "tenantAdminPassword": {
             "type": "securestring",
@@ -195,7 +194,8 @@
         "rdBrokerUrl": "https://rdbroker.wvd.microsoft.com",
         "enablePersistentDesktop": false,
         "existingTenantGroupName": "Default Tenant Group",
-        "isServicePrincipal": false
+        "isServicePrincipal": false,
+        "aadTenantId": ""
     },
     "resources": [
         {
@@ -362,14 +362,14 @@
                             "password": "PrivateSettingsRef:tenantAdminPassword"
                         },
                         "RDBrokerURL": "[variables('rdBrokerURL')]",
-                        "DefinedTenantGroupName": "[parameters('existingTenantGroupName')]",
+                        "DefinedTenantGroupName": "[variables('existingTenantGroupName')]",
                         "TenantName": "[variables('existingTenantName')]",
                         "HostPoolName": "[variables('hostPoolName')]",
                         "Description": "[variables('hostPoolDescription')]",
                         "FriendlyName": "[variables('hostPoolFriendlyName')]",
                         "Hours": "[variables('registrationExpirationHours')]",
                         "isServicePrincipal": "[variables('isServicePrincipal')]",
-                        "AadTenantId": "[parameters('aadTenantId')]",
+                        "AadTenantId": "[variables('aadTenantId')]",
                         "EnablePersistentDesktop": "[variables('enablePersistentDesktop')]",
                         "defaultDesktopUsers": "[concat('\"',parameters('defaultDesktopUsers'),'\"')]"
                     }
@@ -408,12 +408,12 @@
                             "password": "PrivateSettingsRef:tenantAdminPassword"
                         },
                         "RDBrokerURL": "[variables('rdBrokerURL')]",
-                        "DefinedTenantGroupName": "[parameters('existingTenantGroupName')]",
+                        "DefinedTenantGroupName": "[variables('existingTenantGroupName')]",
                         "TenantName": "[variables('existingTenantName')]",
                         "HostPoolName": "[variables('hostPoolName')]",
                         "Hours": "[variables('registrationExpirationHours')]",
                         "isServicePrincipal": "[variables('isServicePrincipal')]",
-                        "AadTenantId": "[parameters('aadTenantId')]"
+                        "AadTenantId": "[variables('aadTenantId')]"
                     }
                 },
                 "ProtectedSettings": {

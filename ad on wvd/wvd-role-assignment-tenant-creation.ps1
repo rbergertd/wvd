@@ -3,7 +3,7 @@ $tenantAdminPassword = ConvertTo-SecureString -String "" -AsPlainText -Force
 $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $tenantAdminUpnOrApplicationId, $tenantAdminPassword
 $AzureSubscriptionId = "" #Pat should get this for us
 $AzureTenantId = "" #Pat should get this for us
-$existingTenantName = ""
+$existingTenantName = "" #The Tenant name needs to be globally unique - it can only be queried in the users context.
 
 
     ### Importing and Installing modules
