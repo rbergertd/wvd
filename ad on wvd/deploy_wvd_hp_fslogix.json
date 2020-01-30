@@ -210,7 +210,7 @@
         "rdshManagedDisks": "[if(equals(variables('rdshImageSource'), 'CustomVHD'), variables('rdshUseManagedDisks'), bool('true'))]",
         "rdshPrefix": "[concat(parameters('rdshNamePrefix'),'-')]",
         "avSetSKU": "[if(variables('rdshManagedDisks'), 'Aligned', 'Classic')]",
-        "existingDomainUsername": "[first(split(parameters('existingDomainUPN'), '@'))]",
+        "existingDomainUsername": "WVDAdmin",
         "vhds": "[concat('vhds','/', variables('rdshPrefix'))]",
         "subnet-id": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/virtualNetworks/subnets',parameters('existingVnetName'), parameters('existingSubnetName'))]",
         "existingTenantName": "[replace(parameters('existingTenantName'),'\"','')]",
